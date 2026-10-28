@@ -1,5 +1,32 @@
 import Foundation
 
+public enum CompressionService {
+    public static func compress(files: [InputFile], mode: CompressionMode, quality: CompressionQuality,
+                                fidelity: MediaFidelity = .lossless, cancellation: CancellationToken,
+                                progress: ProgressHandler = { _ in }) async throws -> CompressionResult {
+        switch mode {
+        case .image:
+            guard files.count == 1, let file = files.first else { throw CompressionError.image("Select one image at a time, or use ZIP to group files.") }
+            return try ImageCompressor().compress(file, fidelity: fidelity, quality: quality, cancellation: cancellation, progress: progress)
+        case .audio:
+            guard files.count == 1, let file = files.first else { throw CompressionError.audio("Select one audio file at a time, or use ZIP to group files.") }
+            return try AudioCompressor().compress(file, fidelity: fidelity, quality: quality, cancellation: cancellation, progress: progress)
+        case .model:
+            if files.count == 1, let file = files.first, !file.isDirectory, file.url.pathExtension.lowercased() == "glb" {
+                return try ModelCompressor().compressGLB(file, cancellation: cancellation, progress: progress)
+            }
+            return try ZIPCompressor().compress(files, quality: quality, cancellation: cancellation, progress: progress)
+        case .video:
+            guard files.count == 1, let file = files.first else {
+                throw CompressionError.video("Select one video at a time. Use ZIP to group multiple files.")
+            }
+            return try await VideoCompressor().compress(file, quality: quality, cancellation: cancellation, progress: progress)
+        case .archive:
+            return try ZIPCompressor().compress(files, quality: quality, cancellation: cancellation, progress: progress)
+        }
+    }
+}
+
 public enum ResultSaver {
     public static func save(_ result: CompressionResult, to destination: URL, protecting inputs: [URL],
                             cancellation: CancellationToken = CancellationToken(), progress: ProgressHandler = { _ in }) throws {

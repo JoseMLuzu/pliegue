@@ -124,6 +124,15 @@ final class VideoTests: XCTestCase {
         }
     }
 
+    func testMultipleVideosAreRejectedBeforeProcessing() async throws {
+        let input = try fixture("source")
+        do {
+            _ = try await CompressionService.compress(files: [input, input], mode: .video, quality: .balanced, cancellation: CancellationToken())
+            XCTFail("Video mode must accept only one video")
+        } catch {
+            XCTAssertTrue(error.localizedDescription.contains("one video"))
+        }
+    }
 
     func testQualitySettingsOrderTheTargetBitrates() {
         let smaller = CompressionQuality.smaller.videoBitRate(source: 8_000_000, width: 1920, height: 1080, frameRate: 30)
