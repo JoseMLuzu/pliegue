@@ -65,6 +65,9 @@ struct ContentView: View {
                 if model.files.isEmpty { emptyState }
                 else { fileTable }
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            if let error = model.errorMessage { errorNotice(error) }
+            if model.isBusy { progressArea }
+            else if let result = model.result { resultArea(result) }
             statusBar
         }
         .frame(minWidth: 320)
@@ -185,6 +188,7 @@ struct ContentView: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
+            if let result = model.result, !model.isBusy { resultInspector(result) }
             Section("Supported Files") {
                 Text(model.mode.dropHint).font(.caption).foregroundStyle(.secondary)
             }
@@ -193,9 +197,78 @@ struct ContentView: View {
         .controlSize(.regular)
     }
 
+    private func resultInspector(_ result: CompressionResult) -> some View {
+        Section {
+            LabeledContent("Original", value: FileUtilities.format(result.originalSize))
+            LabeledContent(result.originalRetained ? "Retained" : "Result", value: FileUtilities.format(result.outputSize))
+            if result.hasSavings {
+                LabeledContent("Space saved") {
+                    Text(result.savedPercent / 100, format: .percent.precision(.fractionLength(1))).foregroundStyle(.green)
+                }
+            }
+            Label(result.verification, systemImage: "checkmark.shield").font(.caption).foregroundStyle(.secondary)
+            Text(result.detail).font(.caption).foregroundStyle(.secondary)
+        } header: {
+            Text("Result")
+        }
+    }
 
+    private var progressArea: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Divider()
+            HStack(alignment: .center, spacing: 12) {
+                ProgressView().controlSize(.small)
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack {
+                        Text(model.progress.stage.rawValue).font(.callout).fontWeight(.medium)
+                        Spacer()
+                        Text(model.progress.fraction, format: .percent.precision(.fractionLength(0)))
+                            .font(.caption).monospacedDigit().foregroundStyle(.secondary)
+                    }
+                    ProgressView(value: model.progress.fraction).accessibilityLabel(model.progress.stage.rawValue)
+                    if !model.progress.filename.isEmpty {
+                        Text(model.progress.filename).font(.caption).foregroundStyle(.secondary).lineLimit(1).truncationMode(.middle)
+                    }
+                }
+                Button("Cancel") { model.cancel() }.controlSize(.small)
+            }.padding(.horizontal, 16).padding(.bottom, 12).padding(.top, 4)
+        }
+    }
 
+    private func resultArea(_ result: CompressionResult) -> some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack(spacing: 10) {
+                Image(systemName: result.hasSavings ? "checkmark.circle.fill" : "info.circle")
+                    .font(.title3).foregroundStyle(result.hasSavings ? Color.green : Color.secondary)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(result.hasSavings ? "Compression Complete" : "No Size Reduction").font(.callout).fontWeight(.medium)
+                    Text(result.hasSavings ? "\(FileUtilities.format(result.savedBytes)) saved · \(FileUtilities.format(result.outputSize)) result" : result.originalRetained ? "The original file has been retained." : "The ZIP is available to keep your files together.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 10)
+                if result.originalRetained || model.savedURL != nil {
+                    Button("Show in Finder") { model.reveal() }.controlSize(.small)
+                }
+                if !result.originalRetained {
+                    Button(model.savedURL == nil ? "Save…" : "Save Copy…") { model.save() }
+                        .buttonStyle(.borderedProminent).controlSize(.small)
+                }
+            }.padding(14)
+        }
+    }
 
+    private func errorNotice(_ message: String) -> some View {
+        VStack(spacing: 0) {
+            Divider()
+            HStack(alignment: .top, spacing: 9) {
+                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                Text(message).font(.callout).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
+                Button { model.errorMessage = nil } label: { Image(systemName: "xmark") }
+                    .buttonStyle(.plain).foregroundStyle(.secondary).help("Dismiss error")
+            }.padding(12)
+        }
+    }
 
     private var statusBar: some View {
         VStack(spacing: 0) {
