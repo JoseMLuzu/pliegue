@@ -318,11 +318,35 @@ struct ContentView: View {
     }
 
     private var helpSheet: some View {
-        VStack(spacing: 12) {
-            Text("Pliegue Help").font(.title2)
-            Text(model.mode.explanation)
-            Button("Done") { model.showHelp = false }
-        }.padding().frame(width: 400)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 12) {
+                Image(nsImage: NSImage(named: NSImage.applicationIconName) ?? NSImage()).resizable().frame(width: 48, height: 48)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Pliegue Help").font(.title2).fontWeight(.semibold)
+                    Text("Local file compression for Mac").foregroundStyle(.secondary)
+                }
+            }.padding(24)
+            Divider()
+            Form {
+                Section("Photos, Video & Audio") {
+                    Text("Process one media file at a time. Photos and audio offer lossless or lossy output. Video uses lossy HEVC. Originals are retained if the result is not smaller.")
+                }
+                Section("3D Models") {
+                    Text("Self-contained GLB optimization removes JSON whitespace without changing geometry or binary chunks. Other models use ZIP. Include all linked assets in the selected project folder.")
+                }
+                Section("Files & Folders") {
+                    Text("ZIP preserves included file contents and internal paths. Savings are not guaranteed. Symbolic links are rejected. Save outside selected source folders.")
+                }
+                Section("Privacy & Preservation") {
+                    Text("Nothing is uploaded. Originals are never replaced. Results are temporary until saved. Converted media may change metadata; use ZIP for exact original file contents. Unsupported media features require ZIP.")
+                }
+            }.formStyle(.grouped)
+            Divider()
+            HStack {
+                Spacer()
+                Button("Done") { model.showHelp = false }.keyboardShortcut(.defaultAction)
+            }.padding(16)
+        }.frame(width: 480, height: 540)
     }
 
     private func removeSelectedFiles() {
