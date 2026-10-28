@@ -9,6 +9,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "PliegueCore", linkerSettings: [.linkedLibrary("z")]),
-        .testTarget(name: "PliegueCoreTests", dependencies: ["PliegueCore"]),
+        .testTarget(name: "PliegueCoreTests", dependencies: ["PliegueCore"], resources: [.copy("Fixtures")]),
     ]
 )
