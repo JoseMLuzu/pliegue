@@ -56,11 +56,13 @@ public struct VideoCompressor: Sendable {
         var keep = false
         defer { if !keep { try? FileManager.default.removeItem(at: workspace) } }
         var audioFormats: [CMFormatDescription] = []
+        var audioTimeRanges: [CMTimeRange] = []
         for track in audioTracks {
             guard let audioFormat = try await track.load(.formatDescriptions).first else {
                 throw CompressionError.video("An audio track could not be read.")
             }
             audioFormats.append(audioFormat)
+            audioTimeRanges.append(try await track.load(.timeRange))
         }
         let mp4Audio = audioFormats.allSatisfy { [kAudioFormatMPEG4AAC, kAudioFormatMPEGLayer3, kAudioFormatAppleLossless].contains(CMFormatDescriptionGetMediaSubType($0)) }
         let fileType: AVFileType = mp4Audio ? .mp4 : .mov
@@ -125,6 +127,7 @@ public struct VideoCompressor: Sendable {
         progress(.init(.verifying, fraction: 0.8, filename: file.name))
         try await verify(outputURL, width: width, height: height, transform: transform, duration: duration,
                          expectedFrames: channels[0].frames, audioDigests: channels.dropFirst().map { $0.digest.finalize() },
+                         audioTimeRanges: audioTimeRanges,
                          cancellation: cancellation, progress: progress)
         try cancellation.check()
         let outputSize = try FileUtilities.size(of: outputURL)
@@ -180,7 +183,7 @@ public struct VideoCompressor: Sendable {
     }
 
     private func verify(_ url: URL, width: Int, height: Int, transform: CGAffineTransform, duration: Double,
-                        expectedFrames: Int, audioDigests: [SHA256.Digest], cancellation: CancellationToken,
+                        expectedFrames: Int, audioDigests: [SHA256.Digest], audioTimeRanges: [CMTimeRange], cancellation: CancellationToken,
                         progress: ProgressHandler) async throws {
         let asset = AVURLAsset(url: url)
         guard let video = try await asset.loadTracks(withMediaType: .video).first,
@@ -207,6 +210,11 @@ public struct VideoCompressor: Sendable {
         guard audio.count == audioDigests.count else { throw CompressionError.verification("The number of audio tracks changed.") }
         for (index, track) in audio.enumerated() {
             try cancellation.check()
+            let timeRange = try await track.load(.timeRange)
+            guard abs(timeRange.start.seconds - audioTimeRanges[index].start.seconds) < 0.005,
+                  abs(timeRange.duration.seconds - audioTimeRanges[index].duration.seconds) < 0.005 else {
+                throw CompressionError.verification("The audio timing changed during compression. The result was discarded. Use ZIP to preserve this video.")
+            }
             let audioReader = try AVAssetReader(asset: asset)
             let audioOutput = AVAssetReaderTrackOutput(track: track, outputSettings: nil)
             guard audioReader.canAdd(audioOutput) else { throw CompressionError.verification("The output audio could not be read.") }
