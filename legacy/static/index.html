@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f2">
+  <meta name="description" content="Reduce videos con calidad visual alta o comprime cualquier archivo en ZIP sin pérdida. Todo en tu equipo.">
+  <title>Pliegue — Compresión local de videos y archivos</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-logo" viewBox="0 0 32 32"><path d="m5 5 11 6L27 5M5 14l11 6 11-6M5 23l11 6 11-6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8Zm0 0v5h5M9 13h6m-6 4h6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v5c0 5-8 10-8 10S4 16 4 11V6Zm-4 9 3 3 5-6"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m3 7 9-5 9 5-9 5Zm0 5 9 5 9-5M3 17l9 5 9-5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5Z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m4 18 5-5 3 3 4-6 5 8"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m10 8 6 4-6 4Z"/></symbol>
+    <symbol id="i-audio" viewBox="0 0 24 24"><path d="M9 17V5l11-2v12M9 8l11-2"/><ellipse cx="6" cy="18" rx="3" ry="3"/><ellipse cx="17" cy="16" rx="3" ry="3"/></symbol>
+  </svg>
+
+  <header class="site-header wrap">
+    <a class="brand" href="/" aria-label="Pliegue, inicio"><span class="brand-mark"><svg class="icon"><use href="#i-logo"/></svg></span>pliegue<span class="brand-dot">.</span></a>
+    <nav aria-label="Navegación principal"><button class="nav-link" id="how-button">Cómo funciona <span>↗</span></button><a class="nav-link" href="#questions">Preguntas frecuentes</a><span class="local-pill"><span class="status-dot"></span>100% local</span></nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-labelledby="main-title">
+      <div>
+        <p class="eyebrow"><span class="mini-line"></span>UN POCO DE ORDEN. MUCHO MÁS ESPACIO.</p>
+        <h1 id="main-title">Menos espacio.<br><span id="hero-quality">Gran detalle.</span><span class="title-asterisk" aria-hidden="true">✳</span></h1>
+        <p class="hero-copy" id="hero-copy">Reduce tus videos con calidad visual alta y la misma resolución.<br class="desktop-break"> O crea un ZIP sin pérdida para cualquier tipo de archivo.</p>
+      </div>
+      <div class="hero-note"><span class="hand-arrow" aria-hidden="true">↙</span><p>Lo que importa<br>se queda contigo.</p></div>
+    </section>
+
+    <section class="workspace" aria-label="Herramienta de compresión">
+      <div class="compressor panel">
+        <div class="panel-heading"><div><p class="eyebrow">01 / TUS ARCHIVOS</p><h2>Hagamos espacio.</h2></div><span class="tiny-tag">CUALQUIER FORMATO</span></div>
+
+        <fieldset class="mode-settings" id="mode-settings"><legend class="sr-only">Qué quieres hacer</legend><div class="mode-options"><label><input type="radio" name="mode" value="video" checked><svg class="icon"><use href="#i-video"/></svg><span>Reducir video</span></label><label><input type="radio" name="mode" value="zip"><svg class="icon"><use href="#i-layers"/></svg><span>ZIP sin pérdida</span></label></div><p class="mode-description" id="mode-description">H.265 · Misma resolución · Audio original. La recodificación de video tiene pérdida.</p></fieldset>
+        <p class="engine-note" id="engine-note" role="status" hidden>Para reducir videos necesitas FFmpeg. Instálalo con <code>brew install ffmpeg</code> o <code>python3 -m pip install imageio-ffmpeg</code>, y reinicia Pliegue. ZIP funciona sin instalarlo.</p>
+
+        <input type="file" id="file-input" multiple hidden>
+        <button class="dropzone" id="dropzone" type="button" aria-describedby="drop-hint">
+          <span class="upload-icon"><svg class="icon"><use href="#i-plus"/></svg></span>
+          <strong id="drop-title">Arrastra un video aquí</strong>
+          <span id="drop-hint">Fotos, videos, documentos… todos son bienvenidos.</span>
+          <span class="select-files">O selecciona archivos <svg class="icon"><use href="#i-arrow"/></svg></span>
+        </button>
+
+        <div class="files-section" id="files-section" hidden>
+          <div class="files-heading"><span id="file-count">0 archivos</span><button class="text-button" id="clear-button">Quitar todos</button></div>
+          <ul class="file-list" id="file-list" aria-label="Archivos seleccionados"></ul>
+          <div class="files-total"><span>Tamaño original</span><strong id="total-size">0 B</strong></div>
+          <p class="format-warning" id="format-warning" role="status" hidden></p>
+        </div>
+
+        <fieldset class="compression-settings" id="settings">
+          <legend><span class="eyebrow" id="settings-eyebrow">02 / CALIDAD VISUAL</span><span class="setting-help" id="level-help">Más detalle puede ocupar más.</span></legend>
+          <div class="level-options">
+            <label class="level-option"><input type="radio" name="level" value="fast"><span class="level-title">Rápida <span class="level-glyph">↯</span></span><span class="level-description">Menos tiempo</span></label>
+            <label class="level-option"><input type="radio" name="level" value="balanced" checked><span class="level-title">Equilibrada <span class="level-glyph">◒</span></span><span class="level-description">Lo mejor de ambos</span></label>
+            <label class="level-option"><input type="radio" name="level" value="maximum"><span class="level-title">Máxima <span class="level-glyph">⇥⇤</span></span><span class="level-description">Busca más ahorro</span></label>
+          </div>
+          <div class="archive-name"><label for="archive-name">Nombre del resultado</label><div class="name-input"><input id="archive-name" type="text" value="mi-video-reducido" maxlength="160" autocomplete="off" spellcheck="false" aria-label="Nombre del resultado"><span id="output-extension">.mp4</span></div></div>
+        </fieldset>
+
+        <div class="error-message" id="error-message" role="alert" hidden></div>
+        <button class="primary-button compress-button" id="compress-button" disabled><svg class="icon"><use href="#i-layers"/></svg><span>Comprimir archivos</span><svg class="icon button-arrow"><use href="#i-arrow"/></svg></button>
+        <p class="privacy-note"><svg class="icon"><use href="#i-lock"/></svg>Solo en tu equipo. Sin cuentas. Sin nube.</p>
+      </div>
+
+      <aside class="result-panel panel" aria-label="Resultado de la compresión">
+        <div class="result-topline"><span class="eyebrow">TUS ARCHIVOS. EL AHORRO REAL.</span><span class="small-orbit" aria-hidden="true">✳</span></div>
+        <div id="result-idle">
+          <div class="file-art" aria-hidden="true"><div class="art-file art-back"><span>JPG</span><svg class="icon"><use href="#i-image"/></svg><i></i></div><div class="art-file art-middle"><span>MOV</span><svg class="icon"><use href="#i-video"/></svg><i></i></div><div class="art-file art-front"><span>ZIP</span><div class="zipper"><b></b><b></b><b></b><b></b><b></b><b></b><em></em></div><i></i></div><span class="art-spark">✳</span><span class="art-dot"></span></div>
+          <h2 id="idle-title">Tu video.<br>Con menos peso.</h2>
+          <p class="result-description" id="idle-description">Recodificación H.265 con calidad visual alta, conservando la resolución. El ahorro depende del video.</p>
+          <div class="result-divider"></div>
+          <div class="integrity-line"><span class="integrity-icon"><svg class="icon"><use href="#i-shield"/></svg></span><div><strong id="idle-verification">Misma resolución. Audio original.</strong><span id="idle-verification-detail">Comprobamos que el resultado se decodifica.</span></div></div>
+        </div>
+
+        <div id="result-progress" class="progress-content" hidden>
+          <div class="working-art" aria-hidden="true"><svg class="icon"><use href="#i-logo"/></svg><span></span></div>
+          <p class="eyebrow" id="progress-step">PREPARANDO TUS ARCHIVOS</p>
+          <h2 id="progress-title">Cada byte cuenta.</h2>
+          <p class="result-description" id="progress-description">Copiando los archivos al compresor local.</p>
+          <div class="progress-heading"><span id="progress-label">Preparando</span><strong id="progress-percent">0%</strong></div>
+          <div class="progress-track" id="progress-track" role="progressbar" aria-label="Progreso de compresión" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
+          <p class="current-file" id="current-file"></p>
+          <button class="cancel-button" id="cancel-button">Cancelar proceso <svg class="icon"><use href="#i-close"/></svg></button>
+        </div>
+
+        <div id="result-done" class="done-content" hidden>
+          <span class="done-icon" id="result-icon"><svg class="icon"><use href="#i-check"/></svg></span>
+          <p class="eyebrow" id="result-outcome">03 / LISTO PARA LLEVAR</p>
+          <h2 id="result-title">Más espacio.<br>La misma calidad.</h2>
+          <div class="saving-number" id="saving-number">0<span>%</span></div>
+          <p class="saving-caption" id="saving-caption">menos espacio</p>
+          <div class="size-comparison"><div><span>Original</span><strong id="original-size">—</strong></div><svg class="icon"><use href="#i-arrow"/></svg><div><span id="output-label">Tu video</span><strong id="compressed-size">—</strong></div></div>
+          <p class="result-note" id="result-note"></p>
+          <p class="verified" id="verified-note"><svg class="icon"><use href="#i-shield"/></svg>Reproducción comprobada</p>
+          <a class="primary-button download-button" id="download-button"><svg class="icon"><use href="#i-download"/></svg>Descargar ZIP</a>
+          <button class="text-button restart-button" id="restart-button">Comprimir otros archivos <span>↗</span></button>
+        </div>
+        <div class="result-bottom"><span class="status-dot"></span><span id="result-status">Elige tus archivos y el modo que necesitas.</span></div>
+      </aside>
+    </section>
+
+    <div class="honest-note"><svg class="icon"><use href="#i-info"/></svg><p><strong>Dos modos, dos garantías.</strong> Video conserva la resolución y busca una calidad visual alta, con pérdida. ZIP conserva los datos exactos, pero puede no reducir formatos ya comprimidos. Siempre te mostramos el ahorro real.</p></div>
+
+    <section class="benefits" aria-label="Ventajas">
+      <article><span class="benefit-number">01</span><div><svg class="icon"><use href="#i-spark"/></svg><h3>Tú eliges la calidad.</h3><p>Video con calidad visual alta, o ZIP para recuperar los datos exactos del original.</p></div></article>
+      <article><span class="benefit-number">02</span><div><svg class="icon"><use href="#i-lock"/></svg><h3>Se queda en casa.</h3><p>Todo se procesa en tu computadora. Tus archivos no viajan a servidores externos.</p></div></article>
+      <article><span class="benefit-number">03</span><div><svg class="icon"><use href="#i-layers"/></svg><h3>Todos caben aquí.</h3><p>Documentos, imágenes, audio, video y más. Un solo lugar, cualquier formato.</p></div></article>
+    </section>
+
+    <section class="questions" id="questions" aria-labelledby="questions-title">
+      <div><p class="eyebrow">LAS COSAS CLARAS</p><h2 id="questions-title">Un par de respuestas.</h2><p>Para que comprimas con tranquilidad.</p></div>
+      <div class="faq-list">
+        <details><summary>¿Mis fotos y videos pierden calidad?<span>+</span></summary><p>Depende del modo. ZIP sin pérdida mantiene el contenido idéntico y lo verifica mediante SHA-256. Reducir video recodifica la imagen en H.265: conserva la resolución, pero tiene pérdida y no puede garantizar que las diferencias sean invisibles. El audio se copia sin recodificar y se verifica por separado. Los originales de tu equipo nunca se modifican.</p></details>
+        <details><summary>¿Por qué algunos archivos apenas se reducen?<span>+</span></summary><p>Formatos como JPG, MP4, MP3 o ZIP ya están comprimidos. No existe una compresión sin pérdida que reduzca todos los archivos. En esos casos, el ZIP puede ocupar algo más por su estructura. El resultado siempre muestra el tamaño real, aunque no haya ahorro. La compresión suele ser más eficaz con texto, CSV, registros y otros datos repetitivos.</p></details>
+        <details><summary>¿El resultado conserva el formato original?<span>+</span></summary><p>ZIP entrega un contenedor .zip con los archivos originales. Reducir video entrega un video H.265 en .mp4 para entradas MP4/MOV/M4V con audio compatible, o .mkv para conservar otros códecs de audio sin convertirlos. Necesitas un reproductor compatible con H.265. Si el resultado no ocupa menos, se descarta y se ofrece el original, indicando que no hubo ahorro. Esta versión recibe un video por tarea y no recodifica HDR, Dolby Vision ni formatos de color incompatibles.</p></details>
+        <details><summary>¿Hay un límite de tamaño?<span>+</span></summary><p>No hay un límite fijo por archivo. Procesamos por bloques y usamos ZIP64 para archivos grandes. El límite práctico es el espacio libre de tu equipo: necesitas espacio para la copia temporal de los originales y el ZIP. Puedes seleccionar hasta 10.000 archivos por tarea. Los temporales se borran al cancelar, al cerrar la aplicación o después de una hora sin actividad.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer wrap"><a class="brand footer-brand" href="/"><svg class="icon"><use href="#i-logo"/></svg>pliegue.</a><p>Guarda más. Conserva todo.</p><span>HECHO PARA ALIGERAR.</span></footer>
+
+  <dialog id="how-dialog" aria-labelledby="how-title"><div class="dialog-heading"><p class="eyebrow">TRES PASOS. TÚ ELIGES.</p><button class="icon-button" id="close-dialog" aria-label="Cerrar"><svg class="icon"><use href="#i-close"/></svg></button></div><h2 id="how-title">Un pliegue y listo.</h2><ol class="how-steps"><li><span>01</span><div><h3>Elige el modo.</h3><p>Reducir video para recodificar un video con calidad visual alta. ZIP sin pérdida para empaquetar cualquier archivo conservando los datos exactos.</p></div></li><li><span>02</span><div><h3>Selecciona y ajusta.</h3><p>En video, elige la calidad visual: más detalle puede ocupar más. En ZIP, el nivel cambia el esfuerzo de compresión y conserva los datos.</p></div></li><li><span>03</span><div><h3>Comprueba y descarga.</h3><p>Verás el ahorro real. Descarga el video reproducible o el ZIP para extraerlo. Si el video no se reduce, se descarta la recodificación y se conserva el original.</p></div></li></ol><p class="dialog-note"><svg class="icon"><use href="#i-lock"/></svg>Todo sucede en tu computadora.</p></dialog>
+  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+</body>
+</html>
